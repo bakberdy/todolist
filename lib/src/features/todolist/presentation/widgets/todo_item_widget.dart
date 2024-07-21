@@ -22,7 +22,11 @@ class _TodoItemWidgetState extends State<TodoItemWidget> {
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
-    return Padding(
+    if(widget.items.isEmpty){
+      return const SizedBox();
+    }
+    else {
+      return Padding(
       padding: EdgeInsets.symmetric(horizontal: 15.h, vertical: 5.h),
       child: Container(
         height: 140.h,
@@ -134,6 +138,7 @@ class _TodoItemWidgetState extends State<TodoItemWidget> {
         ),
       ),
     );
+    }
   }
 
   Widget _buildOptionsButton(

@@ -1,0 +1,52 @@
+name: todolist
+description: "ToDoList"
+
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.4.3 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+
+  cupertino_icons: ^1.0.6
+  dartz: ^0.10.1
+  equatable: ^2.0.5
+  shared_preferences: ^2.2.3
+  flutter_svg: ^2.0.10+1
+  objectbox: ^4.0.1
+  get: ^4.6.6
+  flutter_screenutil: ^5.9.3
+  flutter_slidable: ^3.1.1
+  http: ^1.2.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mockito:
+  test:
+  build_runner:
+
+  flutter_lints: ^3.0.0
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  image_path_android: "img/logo.png"
+  image_path_ios: "img/logo.png"
+  adaptive_icon_background: "img/background.png"
+  adaptive_icon_foreground: "img/foreground.png"
+
+flutter:
+
+  uses-material-design: true
+
+
+
+

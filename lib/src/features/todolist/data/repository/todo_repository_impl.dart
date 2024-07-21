@@ -40,8 +40,8 @@ class TodoRepositoryImpl implements TodoRepository {
     print('create todo profile repo impl');
     try {
       List<TodoProfile> todoProfiles = await _getProfiles();
-      todoProfiles
-          .add(TodoProfile(items: <TodoItemEntity>[].obs, profileName: profileName));
+      todoProfiles.add(
+          TodoProfile(items: <TodoItemEntity>[].obs, profileName: profileName));
       localDataSource.saveTodoProfiles(profiles: todoProfiles);
       return const Right(true);
     } on Exception catch (_) {
@@ -105,8 +105,7 @@ class TodoRepositoryImpl implements TodoRepository {
   Future<Either<Failure, bool>> changeTodoItemStatus(
       {required TodoItemEntity todoItem,
       required bool isDone,
-      required TodoProfile profile})
-  async {
+      required TodoProfile profile}) async {
     try {
       List<TodoProfile> todoProfiles = await _getProfiles();
       RxList<TodoItemEntity> items = await _getTodoItemsInProfile(profile);

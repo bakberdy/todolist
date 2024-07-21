@@ -16,19 +16,17 @@ class TodoController extends GetxController {
   RxList<Quote> quotes = <Quote>[].obs;
   RxBool isLoadedQuotes = false.obs;
 
-
   @override
   void onInit() async {
     super.onInit();
 
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    final SharedPreferences sharedPreferences =
+        await SharedPreferences.getInstance();
 
-    final TodoLocalDataSource localDataSource = TodoLocalDataSourceImpl(sharedPreferences: sharedPreferences)..initializeTodoProfiles();
+    final TodoLocalDataSource localDataSource =
+        TodoLocalDataSourceImpl(sharedPreferences: sharedPreferences)
+          ..initializeTodoProfiles();
     todoRepository = TodoRepositoryImpl(localDataSource: localDataSource);
-
-
-
-
 
     await _loadQuotes();
 
@@ -45,8 +43,7 @@ class TodoController extends GetxController {
     final result = await todoRepository.getTodoProfiles();
 
     result.fold(
-      (failure) {
-      },
+      (failure) {},
       (profilesList) {
         profiles.addAll(profilesList);
       },
@@ -67,18 +64,19 @@ class TodoController extends GetxController {
   }
 
   void createProfile(String name) async {
-    final result = await todoRepository.createNewTodoProfile(profileName: name, color: Colors.blue);
+    final result = await todoRepository.createNewTodoProfile(
+        profileName: name, color: Colors.blue);
     print('create profile controller');
     result.fold(
       (failure) {
         print('Failed to create profile: $failure');
       },
       (_) {
-        profiles.add(TodoProfile(items: <TodoItemEntity>[].obs, profileName: name));
+        profiles
+            .add(TodoProfile(items: <TodoItemEntity>[].obs, profileName: name));
       },
     );
   }
-
 
   void deleteItem(int index, TodoProfile profile) async {
     final item = profile.items[index];
@@ -87,7 +85,8 @@ class TodoController extends GetxController {
 
   void changeItemStatus(int index, TodoProfile profile, bool isDone) async {
     final item = profile.items[index];
-    await todoRepository.changeTodoItemStatus(todoItem: item, isDone: isDone, profile: profile);
+    await todoRepository.changeTodoItemStatus(
+        todoItem: item, isDone: isDone, profile: profile);
   }
 
   void addItem(TodoProfile profile, String title, String task) async {
@@ -97,6 +96,7 @@ class TodoController extends GetxController {
       createdAt: DateTime.now(),
       isDone: false,
     );
-    await todoRepository.addNewTodoItem(todoItem: newItem, todoProfile: profile);
+    await todoRepository.addNewTodoItem(
+        todoItem: newItem, todoProfile: profile);
   }
 }

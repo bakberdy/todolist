@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:todolist/src/features/todolist/domain/entities/quote.dart';
 import 'package:todolist/src/features/todolist/domain/entities/todo_item.dart';
 import 'package:todolist/src/features/todolist/domain/entities/todo_profile.dart';
 import 'package:todolist/src/features/todolist/presentation/controller/todo_controller.dart';
-import 'package:todolist/src/features/todolist/presentation/screens/todo_profile_screen.dart';
+import 'package:todolist/src/features/todolist/presentation/widgets/submit_button.dart';
+import 'package:todolist/src/features/todolist/presentation/widgets/todo_profile_widget.dart';
 
 import '../widgets/extended_floating_action_button.dart';
 import '../widgets/quote_widget.dart';
@@ -48,9 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: 20.h,
-                ),
+                SizedBox(height: 20.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -89,15 +87,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: PageView(
                           controller: pageController,
                           children: quotes
-                              .map((val) =>
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8.0),
-                                child: QuoteWidget(
-                                    themeData: themeData,
-                                    quote: val.q,
-                                    author: val.a),
-                              ))
+                              .map((val) => Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0),
+                                    child: QuoteWidget(
+                                        themeData: themeData,
+                                        quote: val.q,
+                                        author: val.a),
+                                  ))
                               .toList()),
                     );
                   }
@@ -121,87 +118,25 @@ class _HomeScreenState extends State<HomeScreen> {
                         duration: const Duration(seconds: 1),
                         child: profiles.isEmpty
                             ? Center(
-                          child: Text(
-                              "To create profile click on floating button",
-                              style: TextStyle(
-                                  color: themeData
-                                      .appBarTheme.backgroundColor,
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 18.sp)),
-                        )
+                                child: Text(
+                                    "To create profile click on floating button",
+                                    style: TextStyle(
+                                        color: themeData
+                                            .appBarTheme.backgroundColor,
+                                        fontWeight: FontWeight.w800,
+                                        fontSize: 18.sp)),
+                              )
                             : ListView.builder(
-                            itemCount: profiles.length,
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
-                              final profile = profiles[index];
-                              return Padding(
-                                padding: EdgeInsets.only(bottom: 10.h),
-                                child: Slidable(
-                                    key: Key(index.toString()),
-                                    endActionPane: ActionPane(
-                                      motion: const DrawerMotion(),
-                                      extentRatio: 0.25,
-                                      children: [
-                                        SlidableAction(
-                                          onPressed: (context) =>
-                                              _confirmDelete(
-                                                  context, index),
-                                          backgroundColor: Colors.red,
-                                          foregroundColor: Colors.white,
-                                          borderRadius:
-                                          BorderRadius.circular(12),
-                                          icon: Icons.delete,
-                                          label: 'Delete',
-                                        ),
-                                      ],
-                                    ),
-                                    child: InkWell(
-                                      onTap: () {
-                                        Get.to(const TodoProfileScreen(),
-                                            arguments: [profile]);
-                                      },
-                                      borderRadius:
-                                      BorderRadius.circular(10.r),
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 15.w,
-                                            vertical: 30.h),
-                                        decoration: BoxDecoration(
-                                          boxShadow: [
-                                            BoxShadow(
-                                                spreadRadius: 0,
-                                                blurRadius: 5,
-                                                color: Colors.grey
-                                                    .withOpacity(0.5))
-                                          ],
-                                          borderRadius:
-                                          BorderRadius.circular(10.r),
-                                          color: Colors.white,
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              child: Text(
-                                                  profile.profileName,
-                                                  style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                      FontWeight.w500,
-                                                      fontSize: 18.sp)),
-                                            ),
-                                            InkWell(
-                                                onTap: () {},
-                                                child: const Icon(
-                                                  Icons.chevron_right,
-                                                  color: Colors.black,
-                                                ))
-                                          ],
-                                        ),
-                                      ),
-                                    )),
-                              );
-                            }),
+                                itemCount: profiles.length,
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  final profile = profiles[index];
+                                  return TodoProfileWidget(
+                                      controller: controller,
+                                      index: index,
+                                      profile: profile);
+                                }),
                       );
                     })
               ],
@@ -215,14 +150,18 @@ class _HomeScreenState extends State<HomeScreen> {
   void _showAddProfileBottomSheet() {
     var value = '';
 
+    var outlineInputBorder = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(15.r),
+      borderSide: BorderSide(
+        width: 2,
+        color: Theme.of(context).primaryColor,
+      ),
+    );
     Get.bottomSheet(
       isScrollControlled: true,
       Padding(
         padding: EdgeInsets.only(
-          bottom: MediaQuery
-              .of(context)
-              .viewInsets
-              .bottom,
+          bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
         child: Container(
           padding: EdgeInsets.all(16.sp),
@@ -241,9 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: TextStyle(
                     height: 1.2,
                     fontWeight: FontWeight.w800,
-                    color: Theme
-                        .of(context)
-                        .primaryColor,
+                    color: Theme.of(context).primaryColor,
                     fontSize: 25.sp),
               ),
               SizedBox(
@@ -255,91 +192,33 @@ class _HomeScreenState extends State<HomeScreen> {
                 onChanged: (val) => value = val,
                 enabled: true,
                 decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15.r),
-                    borderSide: BorderSide(
-                      width: 2,
-                      color: Theme
-                          .of(context)
-                          .primaryColor,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15.r),
-                    borderSide: BorderSide(
-                      width: 2,
-                      color: Theme
-                          .of(context)
-                          .primaryColor,
-                    ),
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15.r),
-                    borderSide: BorderSide(
-                      width: 2,
-                      color: Theme
-                          .of(context)
-                          .primaryColor,
-                    ),
-                  ),
+                  enabledBorder: outlineInputBorder,
+                  focusedBorder: outlineInputBorder,
+                  border: outlineInputBorder,
                   labelText: 'Profile Name',
                   labelStyle: TextStyle(
                       height: 1.2,
                       fontWeight: FontWeight.w800,
-                      color: Theme
-                          .of(context)
-                          .primaryColor,
+                      color: Theme.of(context).primaryColor,
                       fontSize: 14.sp),
                 ),
               ),
               SizedBox(height: 20.h),
-              SizedBox(
-                width: double.infinity,
-                height: 50.h,
-                child: ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor:
-                    WidgetStatePropertyAll(Theme
-                        .of(context)
-                        .primaryColor),
-                    shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.r))),
-                  ),
+              SubmitButton(
                   onPressed: () {
                     if (value.length < 4) {
-                      Get.snackbar(
-                          backgroundColor:
-                          Theme
-                              .of(context)
-                              .primaryColor
-                              .withOpacity(0.5),
-                          'Error',
+                      _showSnackBar('Error',
                           'Profile name must be at least 4 characters long');
-                    } else if (
-                    controller.profiles.contains(TodoProfile(
+                    } else if (controller.profiles.contains(TodoProfile(
                         items: <TodoItemEntity>[].obs, profileName: value))) {
-                      Get.snackbar(
-                          backgroundColor:
-                          Theme
-                              .of(context)
-                              .primaryColor
-                              .withOpacity(0.5),
-                          'Error',
-                          'Profile with this name already exist');
+                      _showSnackBar(
+                          'Error', 'Profile with this name is already exist');
                     } else {
-                    Get.find<TodoController>().createProfile(value);
-                    Get.back();
+                      Get.find<TodoController>().createProfile(value);
+                      Get.back();
                     }
                   },
-                  child: Text(
-                    'Add',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w800),
-                  ),
-                ),
-              ),
+                  title: "Add"),
               SizedBox(
                 height: 20.h,
               ),
@@ -353,31 +232,10 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _confirmDelete(BuildContext context, int index) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Confirm Delete'),
-          content: const Text('Are you sure you want to delete this profile?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                controller.deleteProfile(index);
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Profile deleted')),
-                );
-              },
-              child: const Text('Delete'),
-            ),
-          ],
-        );
-      },
-    );
+  _showSnackBar(String title, String message) {
+    Get.snackbar(
+        backgroundColor: Theme.of(context).primaryColor.withOpacity(0.5),
+        title,
+        message);
   }
 }

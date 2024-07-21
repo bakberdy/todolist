@@ -23,10 +23,8 @@ class TodoProfile extends Equatable {
 
   factory TodoProfile.fromJson(Map<String, dynamic> map) {
     var itemsFromJson = map['items'] as List;
-    RxList<TodoItemEntity> itemList = itemsFromJson
-        .map((item) => TodoItemEntity.fromJson(item))
-        .toList()
-        .obs;
+    RxList<TodoItemEntity> itemList =
+        itemsFromJson.map((item) => TodoItemEntity.fromJson(item)).toList().obs;
 
     return TodoProfile(
       profileName: map['profileName'],
